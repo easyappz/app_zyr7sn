@@ -9,8 +9,8 @@ function App() {
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <p>
-            Приложение React успешно создано! <br />
-            Ждите обновлений от AI.
+            Шаблон React успешно развернут, <br />
+            Ждите обновлений от AI :)
           </p>
         </header>
       </div>
