@@ -1,7 +1,22 @@
 const express = require('express');
 
-// Для работы с базой данных
-const mongoDb = global.mongoDb;
+/**
+ * Пример создания модели в базу данных
+ */
+// const mongoose = require('mongoose');
+// const db = require('/db');
+
+// const MongoTestSchema = new mongoose.Schema({
+//   value: { type: String, required: true },
+// });
+
+// const MongoModelTest = db.mongoDb.model('Test', MongoTestSchema);
+
+// const newTest = new MongoModelTest({
+//   value: 'test-value',
+// });
+
+// newTest.save();
 
 const router = express.Router();
 
@@ -19,3 +34,4 @@ router.get('/status', (req, res) => {
 });
 
 module.exports = router;
+
