@@ -1,16 +1,15 @@
 const express = require('express');
+const mongoose = require('mongoose');
 
 /**
  * Пример создания модели в базу данных
  */
-// const mongoose = require('mongoose');
-// const db = require('/db');
-
+// 
 // const MongoTestSchema = new mongoose.Schema({
 //   value: { type: String, required: true },
 // });
 
-// const MongoModelTest = db.mongoDb.model('Test', MongoTestSchema);
+// const MongoModelTest = mongoose.model('Test', MongoTestSchema);
 
 // const newTest = new MongoModelTest({
 //   value: 'test-value',
