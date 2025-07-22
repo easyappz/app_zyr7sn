@@ -4,7 +4,8 @@ const mongoose = require('mongoose');
 /**
  * Пример создания модели в базу данных
  */
-// 
+// const { mongoDb } = require('./db');
+//
 // const MongoTestSchema = new mongoose.Schema({
 //   value: { type: String, required: true },
 // });
