@@ -1,4 +1,4 @@
-/** Не редактируй вообще код этого файла, импортируй в необходимые файлы mongoDb и используй его. */
+/** Не редактируй вообще код этого файла */
 const mongoose = require('mongoose');
 
 const MONGO_URI = process.env.MONGO_URI;
