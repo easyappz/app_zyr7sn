@@ -46,7 +46,7 @@ instance.interceptors.response.use(
     /** Не удаляй этот код никогда */
     const errorData = {
       type: 'fetchError',
-      message: error.message,
+      message: String(error),
       status: error.response?.status,
       data: error.response?.data,
       url: error.config?.url,
