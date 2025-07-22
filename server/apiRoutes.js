@@ -4,13 +4,11 @@ const mongoose = require('mongoose');
 /**
  * Пример создания модели в базу данных
  */
-// const { mongoDb } = require('./db');
-//
 // const MongoTestSchema = new mongoose.Schema({
 //   value: { type: String, required: true },
 // });
 
-// const MongoModelTest = mongoDb.model('Test', MongoTestSchema);
+// const MongoModelTest = mongoose.model('Test', MongoTestSchema);
 
 // const newTest = new MongoModelTest({
 //   value: 'test-value',
