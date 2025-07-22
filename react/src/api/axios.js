@@ -1,3 +1,5 @@
+/** Не меняй код этого файла никогда */
+/** Если нужно добавить еще обработчики можешь их добавить в отдельном файле, используя interceptors */
 import axios from 'axios';
 
 /**
@@ -12,7 +14,7 @@ export const instance = axios.create({
   },
 });
 
-// Add request interceptor to include Authorization header with JWT token
+/** Не удаляй этот код никогда */
 instance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
