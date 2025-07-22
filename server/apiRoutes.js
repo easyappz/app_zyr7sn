@@ -10,7 +10,7 @@ const mongoose = require('mongoose');
 //   value: { type: String, required: true },
 // });
 
-// const MongoModelTest = mongoose.model('Test', MongoTestSchema);
+// const MongoModelTest = mongoDb.model('Test', MongoTestSchema);
 
 // const newTest = new MongoModelTest({
 //   value: 'test-value',
