@@ -1,4 +1,8 @@
 /** Не редактируй вообще код этого файла */
+/**
+ * Импортируй и используй базу данных в других файлах.
+ * const { mongoDb } = require('path to db.js')
+ */
 const mongoose = require('mongoose');
 
 const MONGO_URI = process.env.MONGO_URI;
@@ -13,3 +17,5 @@ mongoDb
   .catch((err) => {
     console.error('MongoDB connection error:', err);
   });
+
+exports.mongoDb = mongoDb;
