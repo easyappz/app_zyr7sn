@@ -32,4 +32,3 @@ router.get('/status', (req, res) => {
 });
 
 module.exports = router;
-

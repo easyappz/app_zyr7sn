@@ -3,6 +3,9 @@ const express = require('express');
 const secretListeners = require('./secret-node-listen-000.js');
 const mongoose = require('mongoose');
 
+/** Для работы алиасов */
+require('module-alias/register');
+
 const fakeAppListenedResponse = {
   current: null,
 };
