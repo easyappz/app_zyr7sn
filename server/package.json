@@ -1,16 +1,17 @@
 {
-  "name": "simple-express-app",
+  "name": "coffee-shop-backend",
   "version": "1.0.0",
-  "description": "A simple Node.js Express application",
-  "main": "index.js",
+  "description": "Backend server for coffee shop app (infrastructure skeleton)",
+  "main": "./src/server.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "start": "node ./src/server.js",
+    "dev": "nodemon ./src/server.js"
   },
   "keywords": [
     "express",
     "node",
-    "api"
+    "api",
+    "coffee-shop"
   ],
   "author": "",
   "license": "ISC",
@@ -24,7 +25,8 @@
     "jsonwebtoken": "^9.0.2",
     "module-alias": "^2.2.3",
     "mongoose": "^8.14.1",
-    "multer": "^1.4.5-lts.1"
+    "multer": "^1.4.5-lts.1",
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
     "nodemon": "^3.1.7"

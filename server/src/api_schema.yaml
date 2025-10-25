@@ -1,0 +1,191 @@
+openapi: 3.0.3
+info:
+  title: Coffee Shop API
+  version: 0.1.0
+  description: |
+    Infrastructure skeleton for Coffee Shop backend. This file reflects current and planned endpoints.
+    Only HTTP endpoints are used. No sockets.
+servers:
+  - url: http://localhost:3000
+    description: Local development
+paths:
+  /api/hello:
+    get:
+      summary: Hello endpoint
+      tags: [Health]
+      responses:
+        '200':
+          description: Successful hello response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              example:
+                message: Hello from API!
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+  /api/status:
+    get:
+      summary: Health/Status check
+      tags: [Health]
+      responses:
+        '200':
+          description: Service status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  timestamp:
+                    type: string
+                    format: date-time
+              example:
+                status: ok
+                timestamp: 2024-01-01T00:00:00.000Z
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+  /api/auth/_placeholder:
+    get:
+      summary: Placeholder for Auth module
+      tags: [Auth]
+      responses:
+        '200':
+          description: Placeholder response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  module:
+                    type: string
+                  message:
+                    type: string
+                  ready:
+                    type: boolean
+              example:
+                module: auth
+                message: auth module placeholder
+                ready: false
+  /api/products/_placeholder:
+    get:
+      summary: Placeholder for Products module
+      tags: [Products]
+      responses:
+        '200':
+          description: Placeholder response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  module:
+                    type: string
+                  message:
+                    type: string
+                  ready:
+                    type: boolean
+              example:
+                module: products
+                message: products module placeholder
+                ready: false
+  /api/orders/_placeholder:
+    get:
+      summary: Placeholder for Orders module
+      tags: [Orders]
+      responses:
+        '200':
+          description: Placeholder response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  module:
+                    type: string
+                  message:
+                    type: string
+                  ready:
+                    type: boolean
+              example:
+                module: orders
+                message: orders module placeholder
+                ready: false
+  /api/bonus/_placeholder:
+    get:
+      summary: Placeholder for Bonus module
+      tags: [Bonus]
+      responses:
+        '200':
+          description: Placeholder response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  module:
+                    type: string
+                  message:
+                    type: string
+                  ready:
+                    type: boolean
+              example:
+                module: bonus
+                message: bonus module placeholder
+                ready: false
+  /api/push/_placeholder:
+    get:
+      summary: Placeholder for Push module
+      tags: [Push]
+      responses:
+        '200':
+          description: Placeholder response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  module:
+                    type: string
+                  message:
+                    type: string
+                  ready:
+                    type: boolean
+              example:
+                module: push
+                message: push module placeholder
+                ready: false
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
