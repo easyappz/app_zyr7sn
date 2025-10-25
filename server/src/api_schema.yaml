@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Coffee Shop API
   version: 1.0.0
-  description: API schema for products catalog and bonus system
+  description: API schema for products catalog, bonus system, orders, payments and push
 servers:
   - url: /api
 paths:
@@ -171,6 +171,322 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /orders:
+    post:
+      summary: Create a new order
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [items, fulfillmentType, paymentMethod]
+              properties:
+                items:
+                  type: array
+                  items:
+                    type: object
+                    required: [productId, quantity]
+                    properties:
+                      productId:
+                        type: string
+                      quantity:
+                        type: integer
+                        minimum: 1
+                      options:
+                        type: object
+                        properties:
+                          syrups:
+                            type: array
+                            items:
+                              type: string
+                fulfillmentType:
+                  type: string
+                  enum: [pickup, delivery]
+                pickupTime:
+                  type: string
+                  format: date-time
+                  nullable: true
+                deliveryAddress:
+                  type: string
+                  nullable: true
+                paymentMethod:
+                  type: string
+                  enum: [e-wallet, cod]
+      responses:
+        '201':
+          description: Created order with payment instructions (if e-wallet)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    $ref: '#/components/schemas/Order'
+                  payment:
+                    type: object
+                    nullable: true
+                    properties:
+                      paymentProvider:
+                        type: string
+                      actionUrl:
+                        type: string
+                      method:
+                        type: string
+                      payloadExample:
+                        type: object
+                      acceptableActions:
+                        type: array
+                        items:
+                          type: string
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /orders/{id}:
+    get:
+      summary: Get order by id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Invalid id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /orders/{id}/status:
+    patch:
+      summary: Update order status and notify user via Web Push
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  type: string
+                  enum: [new, in_progress, ready, completed, cancelled]
+      responses:
+        '200':
+          description: Updated order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /payments/e-wallet/mock:
+    post:
+      summary: Mock e-wallet payment result
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [orderId, action]
+              properties:
+                orderId:
+                  type: string
+                action:
+                  type: string
+                  enum: [success, fail]
+      responses:
+        '200':
+          description: Payment result applied to order
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    $ref: '#/components/schemas/Order'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /push/subscribe:
+    post:
+      summary: Save Web Push subscription for current user
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [subscription]
+              properties:
+                subscription:
+                  $ref: '#/components/schemas/WebPushSubscription'
+      responses:
+        '201':
+          description: Subscription created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  created:
+                    type: boolean
+        '200':
+          description: Subscription updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  updated:
+                    type: boolean
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /push/public-key:
+    get:
+      summary: Get public VAPID key for Web Push
+      responses:
+        '200':
+          description: Public VAPID key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  publicKey:
+                    type: string
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   securitySchemes:
     bearerAuth:
@@ -207,6 +523,83 @@ components:
         updatedAt:
           type: string
           format: date-time
+    Order:
+      type: object
+      properties:
+        _id:
+          type: string
+        user:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+        fulfillmentType:
+          type: string
+          enum: [pickup, delivery]
+        pickupTime:
+          type: string
+          format: date-time
+          nullable: true
+        deliveryAddress:
+          type: string
+          nullable: true
+        paymentMethod:
+          type: string
+          enum: [e-wallet, cod]
+        paymentStatus:
+          type: string
+          enum: [pending, paid, failed, cod]
+        status:
+          type: string
+          enum: [new, in_progress, ready, completed, cancelled]
+        totals:
+          $ref: '#/components/schemas/OrderTotals'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    OrderItem:
+      type: object
+      properties:
+        product:
+          type: string
+        quantity:
+          type: integer
+        priceAtPurchase:
+          type: number
+        options:
+          type: object
+          properties:
+            syrups:
+              type: array
+              items:
+                type: string
+    OrderTotals:
+      type: object
+      properties:
+        subtotal:
+          type: number
+        bonusApplied:
+          type: number
+        cashbackEarned:
+          type: number
+        grandTotal:
+          type: number
+    WebPushSubscription:
+      type: object
+      properties:
+        endpoint:
+          type: string
+        keys:
+          type: object
+          properties:
+            p256dh:
+              type: string
+            auth:
+              type: string
     Error:
       type: object
       properties:

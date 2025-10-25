@@ -4,6 +4,9 @@ const auth = require('@src/middleware/auth');
 const productsController = require('@src/controllers/productsController');
 const bonusController = require('@src/controllers/bonusController');
 const devSeedController = require('@src/controllers/devSeedController');
+const ordersController = require('@src/controllers/ordersController');
+const paymentsController = require('@src/controllers/paymentsController');
+const pushController = require('@src/controllers/pushController');
 
 const router = express.Router();
 
@@ -45,24 +48,22 @@ router.use('/bonus', bonusRouter);
 // Dev seed route (development only)
 router.get('/dev/seed', devSeedController.run);
 
-// Placeholder sub-routers for future modules
-function buildPlaceholderRouter(name) {
-  const r = express.Router();
-  r.get('/_placeholder', async (req, res) => {
-    try {
-      res.json({
-        module: name,
-        message: `${name} module placeholder`,
-        ready: false
-      });
-    } catch (error) {
-      res.status(500).json({ error: { message: error.message } });
-    }
-  });
-  return r;
-}
+// Orders routes
+const ordersRouter = express.Router();
+ordersRouter.post('/', auth, ordersController.create);
+ordersRouter.get('/:id', auth, ordersController.getById);
+ordersRouter.patch('/:id/status', auth, ordersController.updateStatus);
+router.use('/orders', ordersRouter);
 
-router.use('/orders', buildPlaceholderRouter('orders'));
-router.use('/push', buildPlaceholderRouter('push'));
+// Payments routes
+const paymentsRouter = express.Router();
+paymentsRouter.post('/e-wallet/mock', auth, paymentsController.eWalletMock);
+router.use('/payments', paymentsRouter);
+
+// Push routes
+const pushRouter = express.Router();
+pushRouter.post('/subscribe', auth, pushController.subscribe);
+pushRouter.get('/public-key', pushController.publicKey);
+router.use('/push', pushRouter);
 
 module.exports = router;
