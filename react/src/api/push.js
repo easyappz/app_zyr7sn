@@ -5,7 +5,7 @@ export async function getPublicKey() {
   return data;
 }
 
-export async function saveSubscription(subscription) {
+export async function subscribePush(subscription) {
   const { data } = await instance.post('/api/push/subscribe', { subscription });
   return data;
 }

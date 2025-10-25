@@ -1,4 +1,3 @@
-/* Easyappz Service Worker for Push */
 self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
@@ -8,37 +7,15 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('push', (event) => {
-  let payload = {};
-  try {
-    payload = event.data ? event.data.json() : {};
-  } catch (e) {
-    payload = { title: event.data ? event.data.text() : 'Новое сообщение', body: '' };
-  }
-
-  const title = payload.title || 'Уведомление кофейни';
+  const data = (() => {
+    try { return event.data ? event.data.json() : {}; } catch (e) { return {}; }
+  })();
+  const title = data.title || 'Уведомление';
   const options = {
-    body: payload.body || 'Откройте приложение для подробностей',
+    body: data.body || '',
     icon: '/logo192.png',
     badge: '/logo192.png',
-    data: { url: payload.url || '/' }
+    data: data.data || {},
   };
-
   event.waitUntil(self.registration.showNotification(title, options));
-});
-
-self.addEventListener('notificationclick', (event) => {
-  event.notification.close();
-  const targetUrl = event.notification?.data?.url || '/';
-  event.waitUntil(
-    (async () => {
-      const allClients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
-      let client = allClients.find((c) => c.url.includes(self.location.origin));
-      if (client) {
-        client.focus();
-        client.navigate(targetUrl);
-      } else {
-        self.clients.openWindow(targetUrl);
-      }
-    })()
-  );
 });

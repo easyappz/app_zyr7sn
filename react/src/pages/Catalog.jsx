@@ -1,64 +1,90 @@
-import React from 'react';
-import { Typography, Divider, Card, Button, Checkbox, Row, Col, Tag } from 'antd';
+import React, { useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { Card, Button, Segmented, Tag, Spin } from 'antd';
+import { getProducts } from '../api/products';
+import { CartContext } from '../context/CartContext';
 
-const syrups = ['Ваниль', 'Карамель', 'Орех', 'Мята'];
+const SYRUP_OPTIONS = ['Карамель', 'Яблоко', 'Малина', 'Клубника', 'Лаванда'];
 
-const drinks = [
-  { id: 'd1', name: 'Эспрессо', desc: 'Классический насыщенный вкус', price: 150 },
-  { id: 'd2', name: 'Капучино', desc: 'Молочная пена и баланс', price: 220 },
-  { id: 'd3', name: 'Латте', desc: 'Мягко и сливочно', price: 230 },
-];
+export default function Catalog() {
+  const [type, setType] = useState('drink');
+  const { addItem } = React.useContext(CartContext);
 
-const desserts = [
-  { id: 's1', name: 'Чизкейк', desc: 'Лёгкий ванильный', price: 280 },
-  { id: 's2', name: 'Макарон', desc: 'Воздушный десерт', price: 120 },
-];
+  const { data: drinks, isLoading: loadingDrinks } = useQuery({ queryKey: ['products', 'drink'], queryFn: () => getProducts({ type: 'drink', limit: 50 }) });
+  const { data: desserts, isLoading: loadingDesserts } = useQuery({ queryKey: ['products', 'dessert'], queryFn: () => getProducts({ type: 'dessert', limit: 50 }) });
 
-const Catalog = () => {
+  const items = useMemo(() => (type === 'drink' ? drinks?.items || [] : desserts?.items || []), [type, drinks, desserts]);
+
+  const [selections, setSelections] = useState({});
+
+  const handleToggleSyrup = (productId, syrup) => {
+    setSelections((prev) => {
+      const list = prev[productId] || [];
+      const exists = list.includes(syrup);
+      const next = exists ? list.filter((s) => s !== syrup) : [...list, syrup];
+      return { ...prev, [productId]: next };
+    });
+  };
+
+  const renderSyrups = (product) => {
+    const allowed = Array.isArray(product.availableSyrups) && product.availableSyrups.length > 0
+      ? SYRUP_OPTIONS.filter((s) => product.availableSyrups.includes(s))
+      : SYRUP_OPTIONS;
+    const selected = selections[product._id] || [];
+    return (
+      <div data-easytag="id1-react/src/pages/Catalog.jsx" className="flex flex-wrap gap-2 mt-2">
+        {allowed.map((s) => (
+          <button
+            key={s}
+            type="button"
+            data-easytag={`id2-react/src/pages/Catalog.jsx-${product._id}-${s}`}
+            onClick={() => handleToggleSyrup(product._id, s)}
+            className={`px-2 py-1 rounded border ${selected.includes(s) ? 'bg-blue-50 border-blue-500 text-blue-600' : 'bg-white border-gray-200'}`}
+          >
+            {s}
+          </button>
+        ))}
+      </div>
+    );
+  };
+
+  const addToCart = (product) => {
+    const syrups = selections[product._id] || [];
+    addItem(product, 1, { syrups });
+  };
+
+  const loading = type === 'drink' ? loadingDrinks : loadingDesserts;
+
   return (
-    <div data-easytag="id1-react/src/pages/Catalog.jsx" className="space-y-10">
-      <section data-easytag="id2-react/src/pages/Catalog.jsx">
-        <div data-easytag="id3-react/src/pages/Catalog.jsx" className="flex items-center justify-between">
-          <Typography.Title data-easytag="id4-react/src/pages/Catalog.jsx" level={2} className="!mb-1">Напитки</Typography.Title>
-          <Tag data-easytag="id5-react/src/pages/Catalog.jsx" color="blue">выберите сиропы при необходимости</Tag>
-        </div>
-        <Divider data-easytag="id6-react/src/pages/Catalog.jsx" className="!my-3" />
-        <Row data-easytag="id7-react/src/pages/Catalog.jsx" gutter={[16, 16]}>
-          {drinks.map((item) => (
-            <Col data-easytag="id8-react/src/pages/Catalog.jsx" key={item.id} xs={24} sm={12} md={8}>
-              <Card data-easytag="id9-react/src/pages/Catalog.jsx" className="h-full" title={item.name} bordered>
-                <div data-easytag="id10-react/src/pages/Catalog.jsx" className="text-gray-600 mb-3">{item.desc}</div>
-                <div data-easytag="id11-react/src/pages/Catalog.jsx" className="text-sm text-gray-500 mb-2">Сиропы (по желанию):</div>
-                <Checkbox.Group data-easytag="id12-react/src/pages/Catalog.jsx" options={syrups} className="flex flex-wrap gap-2 mb-4" />
-                <div data-easytag="id13-react/src/pages/Catalog.jsx" className="flex items-center justify-between">
-                  <div data-easytag="id14-react/src/pages/Catalog.jsx" className="text-lg font-semibold">{item.price} ₽</div>
-                  <Button data-easytag="id15-react/src/pages/Catalog.jsx" type="primary">Добавить в корзину</Button>
-                </div>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </section>
+    <div data-easytag="id3-react/src/pages/Catalog.jsx" className="space-y-4">
+      <div data-easytag="id4-react/src/pages/Catalog.jsx" className="flex items-center justify-between">
+        <h1 data-easytag="id5-react/src/pages/Catalog.jsx" className="text-2xl font-semibold">Меню</h1>
+        <Segmented data-easytag="id6-react/src/pages/Catalog.jsx" options={[{ label: 'Напитки', value: 'drink' }, { label: 'Десерты', value: 'dessert' }]} value={type} onChange={setType} />
+      </div>
 
-      <section data-easytag="id16-react/src/pages/Catalog.jsx">
-        <Typography.Title data-easytag="id17-react/src/pages/Catalog.jsx" level={2} className="!mb-1">Десерты</Typography.Title>
-        <Divider data-easytag="id18-react/src/pages/Catalog.jsx" className="!my-3" />
-        <Row data-easytag="id19-react/src/pages/Catalog.jsx" gutter={[16, 16]}>
-          {desserts.map((item) => (
-            <Col data-easytag="id20-react/src/pages/Catalog.jsx" key={item.id} xs={24} sm={12} md={8}>
-              <Card data-easytag="id21-react/src/pages/Catalog.jsx" className="h-full" title={item.name} bordered>
-                <div data-easytag="id22-react/src/pages/Catalog.jsx" className="text-gray-600 mb-4">{item.desc}</div>
-                <div data-easytag="id23-react/src/pages/Catalog.jsx" className="flex items-center justify-between">
-                  <div data-easytag="id24-react/src/pages/Catalog.jsx" className="text-lg font-semibold">{item.price} ₽</div>
-                  <Button data-easytag="id25-react/src/pages/Catalog.jsx" type="primary">Добавить в корзину</Button>
-                </div>
-              </Card>
-            </Col>
+      {loading && (
+        <div data-easytag="id7-react/src/pages/Catalog.jsx" className="flex justify-center py-10"><Spin /></div>
+      )}
+
+      {!loading && (
+        <div data-easytag="id8-react/src/pages/Catalog.jsx" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {items.map((p) => (
+            <Card
+              key={p._id}
+              data-easytag={`id9-react/src/pages/Catalog.jsx-${p._id}`}
+              title={<div data-easytag={`id10-react/src/pages/Catalog.jsx-${p._id}`}>{p.name}</div>}
+              extra={p.isPromo ? <Tag data-easytag={`id11-react/src/pages/Catalog.jsx-${p._id}` } color="green">Акция</Tag> : null}
+            >
+              <div data-easytag={`id12-react/src/pages/Catalog.jsx-${p._id}`} className="text-gray-600 min-h-[48px]">{p.description}</div>
+              <div data-easytag={`id13-react/src/pages/Catalog.jsx-${p._id}`} className="mt-2 font-semibold">{Number(p.price).toFixed(2)} ₽</div>
+              {p.type === 'drink' && renderSyrups(p)}
+              <div data-easytag={`id14-react/src/pages/Catalog.jsx-${p._id}`} className="mt-4">
+                <Button data-easytag={`id15-react/src/pages/Catalog.jsx-${p._id}`} type="primary" block onClick={() => addToCart(p)}>В корзину</Button>
+              </div>
+            </Card>
           ))}
-        </Row>
-      </section>
+        </div>
+      )}
     </div>
   );
-};
-
-export default Catalog;
+}
