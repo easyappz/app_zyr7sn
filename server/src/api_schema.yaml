@@ -20,12 +20,13 @@ paths:
           name: category
           schema:
             type: string
-          description: Optional product category (e.g. coffee for coffee drinks)
+            enum: [coffee, drink, dessert]
+          description: Filter by product category (coffee for coffee drinks, drink for non-coffee beverages, dessert for sweets)
         - in: query
           name: popular
           schema:
             type: boolean
-          description: Filter by popularity; backend may also accept 1 or "true" as truthy
+          description: Filter by popularity; backend also accepts 1 or "true" as truthy
         - in: query
           name: page
           schema:
@@ -45,7 +46,7 @@ paths:
           name: sort
           schema:
             type: string
-            enum: [price, -price, name, -name, createdAt, -createdAt]
+            enum: [price, -price, name, -name, createdAt, -createdAt, popularityScore, -popularityScore]
           description: Sort field and order
       responses:
         '200':
@@ -518,7 +519,7 @@ components:
           enum: [drink, dessert]
         category:
           type: string
-          nullable: true
+          enum: [coffee, drink, dessert]
         price:
           type: number
         isPromo:
@@ -536,6 +537,10 @@ components:
         size:
           type: string
           nullable: true
+        isPopular:
+          type: boolean
+        popularityScore:
+          type: number
         nutrition:
           type: object
           nullable: true

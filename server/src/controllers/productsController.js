@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Product = require('@src/models/Product');
 
 function parseSort(sort) {
-  const allowed = ['price', 'name', 'createdAt'];
+  const allowed = ['price', 'name', 'createdAt', 'popularityScore'];
   if (!sort || typeof sort !== 'string') return { createdAt: -1 };
   let desc = false;
   let field = sort;
@@ -16,11 +16,17 @@ function parseSort(sort) {
 
 async function list(req, res) {
   try {
-    const { type, page: qPage, limit: qLimit, sort } = req.query;
+    const { type, category, popular, page: qPage, limit: qLimit, sort } = req.query;
 
     const filter = {};
     if (type && ['drink', 'dessert'].includes(type)) {
       filter.type = type;
+    }
+    if (category && ['coffee', 'drink', 'dessert'].includes(category)) {
+      filter.category = category;
+    }
+    if (popular === '1' || popular === 'true' || popular === true) {
+      filter.isPopular = true;
     }
 
     const page = Math.max(parseInt(qPage, 10) || 1, 1);
