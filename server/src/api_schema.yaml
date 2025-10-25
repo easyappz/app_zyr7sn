@@ -17,6 +17,16 @@ paths:
             enum: [drink, dessert]
           description: Filter by product type
         - in: query
+          name: category
+          schema:
+            type: string
+          description: Optional product category (e.g. coffee for coffee drinks)
+        - in: query
+          name: popular
+          schema:
+            type: boolean
+          description: Filter by popularity; backend may also accept 1 or "true" as truthy
+        - in: query
           name: page
           schema:
             type: integer
@@ -506,6 +516,9 @@ components:
         type:
           type: string
           enum: [drink, dessert]
+        category:
+          type: string
+          nullable: true
         price:
           type: number
         isPromo:
@@ -517,6 +530,24 @@ components:
           type: array
           items:
             type: string
+        imageUrl:
+          type: string
+          nullable: true
+        size:
+          type: string
+          nullable: true
+        nutrition:
+          type: object
+          nullable: true
+          properties:
+            kcal:
+              type: number
+            proteins:
+              type: number
+            fats:
+              type: number
+            carbs:
+              type: number
         createdAt:
           type: string
           format: date-time
