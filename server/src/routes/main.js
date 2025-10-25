@@ -1,6 +1,9 @@
 const express = require('express');
 const authController = require('@src/controllers/authController');
 const auth = require('@src/middleware/auth');
+const productsController = require('@src/controllers/productsController');
+const bonusController = require('@src/controllers/bonusController');
+const devSeedController = require('@src/controllers/devSeedController');
 
 const router = express.Router();
 
@@ -28,6 +31,20 @@ authRouter.post('/verify-otp', authController.verifyOtp);
 authRouter.get('/me', auth, authController.me);
 router.use('/auth', authRouter);
 
+// Products routes
+const productsRouter = express.Router();
+productsRouter.get('/', productsController.list);
+productsRouter.get('/:id', productsController.getById);
+router.use('/products', productsRouter);
+
+// Bonus routes
+const bonusRouter = express.Router();
+bonusRouter.get('/summary', auth, bonusController.summary);
+router.use('/bonus', bonusRouter);
+
+// Dev seed route (development only)
+router.get('/dev/seed', devSeedController.run);
+
 // Placeholder sub-routers for future modules
 function buildPlaceholderRouter(name) {
   const r = express.Router();
@@ -45,9 +62,7 @@ function buildPlaceholderRouter(name) {
   return r;
 }
 
-router.use('/products', buildPlaceholderRouter('products'));
 router.use('/orders', buildPlaceholderRouter('orders'));
-router.use('/bonus', buildPlaceholderRouter('bonus'));
 router.use('/push', buildPlaceholderRouter('push'));
 
 module.exports = router;
