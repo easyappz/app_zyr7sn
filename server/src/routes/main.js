@@ -1,4 +1,6 @@
 const express = require('express');
+const authController = require('@src/controllers/authController');
+const auth = require('@src/middleware/auth');
 
 const router = express.Router();
 
@@ -19,6 +21,13 @@ router.get('/status', async (req, res) => {
   }
 });
 
+// Auth routes
+const authRouter = express.Router();
+authRouter.post('/send-otp', authController.sendOtp);
+authRouter.post('/verify-otp', authController.verifyOtp);
+authRouter.get('/me', auth, authController.me);
+router.use('/auth', authRouter);
+
 // Placeholder sub-routers for future modules
 function buildPlaceholderRouter(name) {
   const r = express.Router();
@@ -36,7 +45,6 @@ function buildPlaceholderRouter(name) {
   return r;
 }
 
-router.use('/auth', buildPlaceholderRouter('auth'));
 router.use('/products', buildPlaceholderRouter('products'));
 router.use('/orders', buildPlaceholderRouter('orders'));
 router.use('/bonus', buildPlaceholderRouter('bonus'));
